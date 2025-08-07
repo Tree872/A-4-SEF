@@ -3,20 +3,24 @@
 #include "FileIO.h"
 #include "Customer.h"
 #include "Part.h"
+#include "Order.h"
 #include "Constants.h"
 
 void printCustomer(const Customer* customer);
 void printPart(const Part* p);
+void printOrder(const Order* order);
 
 int main() {
+  Customer customers[10]; 
   Part parts[10]; 
+  int customerCount = loadCustomers(customers, CUSTOMERS_FILE);
+  int partCount = loadParts(parts, PARTS_FILE);
 
-  int partCount = loadParts(parts, PARTS_FILE); 
-  printf("Loaded %d parts from %s\n", partCount, PARTS_FILE);
-  printPart(&parts[0]); 
-  printPart(&parts[1]); 
-
-
+  Order orders[10];
+  int orderCount = loadOrders(orders, parts, partCount, customers, customerCount, ORDERS_FILE);
+  printf("Loaded %d customers, %d parts, and %d orders.\n", customerCount, partCount, orderCount);
+  printOrder(&orders[0]);
+  
 }
 void printCustomer(const Customer* customer) {
   printf("Customer Information:\n");
@@ -64,5 +68,25 @@ void printPart(const Part* p) {
     printf("Unknown Status (%d)\n", p->partStatus);
   }
 
+  printf("-----------------------------\n");
+}
+
+void printOrder(const Order* order) {
+  if (order == NULL) {
+    printf("Invalid Order\n");
+    return;
+  }
+  printf("----- Order Information -----\n");
+  printf("Order ID      : %lld\n", order->orderID);
+  printf("Order Date    : %s\n", order->orderDate);
+  printf("Status        : %d\n", order->orderStatus);
+  printf("Customer ID   : %d\n", order->customerID);
+  printf("Total Amount  : $%.2f\n", order->orderTotal);
+  printf("Distinct Parts: %d\n", order->distinctParts);
+  printf("Total Parts   : %d\n", order->totalParts);
+  for (int i = 0; i < order->distinctParts; i++) {
+    printf("Part ID: %d, Quantity Ordered: %d\n",
+           order->orderedParts[i].partID, order->orderedParts[i].quantityOrdered);
+  }
   printf("-----------------------------\n");
 }

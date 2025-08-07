@@ -1,6 +1,7 @@
 ﻿#include "Validation.h"
 #include "Customer.h"
 #include "Part.h"
+#include "Order.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -15,68 +16,69 @@ int validateCustomerFields(char** fields, int lineNumber) {
   // Validate name
   if (strlen(fields[0]) == 0 || strlen(fields[0]) > 50) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer name must neither be blank or over 50 characters");
+      "\nField #1: Customer name must neither be blank or over 50 characters");
   }
   // Validate address
   if (strlen(fields[1]) == 0 || strlen(fields[1]) > 100) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer address must neither be blank or over 100 characters.");
+      "\nField #2: Customer address must neither be blank or over 100 characters.");
   }
   // Validate city
   if (strlen(fields[2]) == 0 || strlen(fields[2]) > 100) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer city must neither be blank or over 100 characters. ");
+      "\nField #3: Customer city must neither be blank or over 100 characters. ");
   }
   // Validate province
   if (!validateProvince(fields[3])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer province must be a valid canadian province abbreviations");
+      "\nField #4: Customer province must be a valid canadian province abbreviations");
   }
   // Validate postal code
   if (!validatePostalCode(fields[4])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer postal code must be in ANANAN format (where A is an alphabetic letter and N is a numeric digit)");
+      "\nField #5: Customer postal code must be in ANANAN format (where A is an alphabetic letter and N is a numeric digit)");
   }
   // Validate phone number
   if (!validatePhoneNumber(fields[5])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer phone number must be in ###-###-#### format");
+      "\nField #6: Customer phone number must be in ###-###-#### format");
   }
   // Validate email
   if (!validateEmail(fields[6])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer email address must a valid email address");
+      "\nField #7: Customer email address must a valid email address");
   }
   // Validate customer ID
   int customerID = 0;
   sscanf_s(fields[7], "%d", &customerID);
   if (!isInteger(fields[7]) || customerID <= 0) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer ID must be a positive int.");
+      "\nField #8: Customer ID must be a positive int.");
   }
   // Validate credit limit
   float creditLimit = 0.0;
   sscanf_s(fields[8], "%f", &creditLimit);
   if (!isNumber(fields[8]) || creditLimit <= 0.0) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer credit limit must be greater than 0. ");
+      "\nField #9: Customer credit limit must be greater than 0. ");
   }
   // Validate account balance
   if (!isNumber(fields[9]) || fields[9][0] == '-') {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer account balance greater than or equal to 0. ");
+      "\nField #10: Customer account balance greater than or equal to 0. ");
   }
   // Validate last payment date (optional)
   if (strlen(fields[10]) > 0 && !validateDate(fields[10])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer last payment date must be either blank or in YYYY-MM-DD format and is a valid date.");
+      "\nField #11: Customer last payment date must be either blank or in YYYY-MM-DD format and is a valid date.");
   }
   // Validate join date
   if (fields[11] == NULL || !validateDate(fields[11])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer join date must be in YYYY-MM-DD format and is a valid date.");
+      "\nField #12: Customer join date must be in YYYY-MM-DD format and is a valid date.");
   }
   if (strlen(errorMessage) > 60) { // When there is at least one error
+    printf("%s\n", errorMessage);
     // TODO Log the error message
     return 0; 
   }
@@ -89,40 +91,155 @@ int validatePartFields(char** fields, int lineNumber) {
   // Validate part name
   if (strlen(fields[0]) == 0 || strlen(fields[0]) > 50) {
     strcat_s(errorMessage, sizeof(errorMessage),
-      "\nPart name must neither be blank or over 50 characters");
+      "\nField #1: Part name must neither be blank or over 50 characters");
   }
   // Validate part number
   if (strlen(fields[1]) == 0 || strlen(fields[1]) > 50) {
     strcat_s(errorMessage, sizeof(errorMessage),
-      "\nPart number must neither be blank or over 50 characters");
+      "\nField #2: Part number must neither be blank or over 50 characters");
   }
   // Validate part location
   if (!validatePartLocation(fields[2])) {
     strcat_s(errorMessage, sizeof(errorMessage),
-      "\nPart location must be in A###-S###-L##-B## format");
+      "\nField #3: Part location must be in A###-S###-L##-B## format");
   }
   // Validate part cost
   float partCost = 0.0;
   sscanf_s(fields[3], "%f", &partCost);
   if (!isNumber(fields[3]) || partCost <= 0.0) {
     strcat_s(errorMessage, sizeof(errorMessage),
-      "\nPart cost must be a positive number.");
+      "\nField #4: Part cost must be a positive number.");
   }
   // Validate quantity on hand
   if (!isInteger(fields[4]) || fields[4][0] == '-') {
     strcat_s(errorMessage, sizeof(errorMessage),
-      "\nQuantity on hand must be a integer greater than or equal 0.");
+      "\nField #5: Quantity on hand must be a integer greater than or equal 0.");
   }
   // Validate part status
   if (!validatePartStatus(fields[4], fields[5])) {
     strcat_s(errorMessage, sizeof(errorMessage),
-      "\nPart status or quantity on hand is invalid.");
+      "\nField #6: Part status or quantity on hand is invalid.");
   }
   // Validate part ID
-  if (!isInteger(fields[6]) || atoi(fields[6]) <= 0) {
+  int partID = 0;
+  sscanf_s(fields[6], "%d", &partID);
+  if (!isInteger(fields[6]) || partID <= 0) {
     strcat_s(errorMessage, sizeof(errorMessage),
-      "\nPart ID must be a positive integer.");
+      "\nField #7: Part ID must be a positive integer.");
   }
+
+  if (strlen(errorMessage) > 60) { // When there is at least one error
+    printf("%s\n", errorMessage);
+    // TODO Log the error message
+    return 0; 
+  }
+  return 1;
+}
+
+int validateOrderFields(char** fields, int numOfReadFields, int lineNumber, const Part* parts, int partCount, const Customer* customers, int customerCount) {
+  char errorMessage[4096];
+  snprintf(errorMessage, sizeof(errorMessage), "Error when loading orders database: Line %d: ", lineNumber);
+  // Validate order ID
+  if (!validateOrderID(fields[0])) {
+    strcat_s(errorMessage, sizeof(errorMessage), 
+      "\nField #1: Order ID must be in YYYYMMDDSSS format and is a valid date.");
+  }
+  // Validate order date
+  if (!validateDate(fields[1])) {
+    strcat_s(errorMessage, sizeof(errorMessage), 
+      "\nField #2: Order date must be in YYYY-MM-DD format and is a valid date.");
+  }
+  // Validate order status
+  if (!validateOrderStatus(fields[2])) {
+    strcat_s(errorMessage, sizeof(errorMessage), 
+      "\nField #3: Order status must be a valid integer (0, 1, 99, or 500).");
+  }
+  // Validate customer ID
+  if (!validateCustomerIDInOrder(fields[3], customers, customerCount)) {
+    strcat_s(errorMessage, sizeof(errorMessage), 
+      "\nField #4: Customer ID must be a positive integer and must link to an existing customer.");
+  }
+  // Validate order total (just a format check, actual calculation is done later)
+  float orderTotal = 0.0;
+  sscanf_s(fields[4], "%f", &orderTotal);
+  if (!isNumber(fields[4]) || orderTotal <= 0.0) {
+    strcat_s(errorMessage, sizeof(errorMessage), 
+      "\nField #5: Order total must be a positive number.");
+  }
+  // Validate distinct parts
+  int distinctParts = 0;
+  sscanf_s(fields[5], "%d", &distinctParts);
+  int expectedDistinctParts = (numOfReadFields - 7) / 2; // Each part has two fields
+  if (!isInteger(fields[5])) {
+    strcat_s(errorMessage, sizeof(errorMessage), 
+      "\nField #6: Distinct parts must be a positive integer.");
+  }
+  else if (distinctParts != expectedDistinctParts) {
+    strcat_s(errorMessage, sizeof(errorMessage), 
+      "\nField #6: Distinct parts count does not match the number of parts provided.");
+  }
+  // Validate total parts (just a format check, actual calculation is done later)
+  int totalParts = 0;
+  sscanf_s(fields[6], "%d", &totalParts);
+  if (!isInteger(fields[6]) || totalParts < 1) {
+    strcat_s(errorMessage, sizeof(errorMessage), 
+      "\nField #7: Total parts must be a positive integer greater than or equal to 1.");
+  }
+  // Validate ordered parts
+  int numOfParsedOrderedParts = (numOfReadFields - 7) / 2;
+  char localErrorMessage[200];
+  int isAllPartsValid = 1;
+  for (int i = 0; i < numOfParsedOrderedParts; i++) {
+    int partID = 0;
+    int quantityOrdered = 0;
+    sscanf_s(fields[7 + i * 2], "%d", &partID);
+    sscanf_s(fields[8 + i * 2], "%d", &quantityOrdered);
+    if (!isInteger(fields[7 + i * 2]) || partID <= 0) {
+      isAllPartsValid = 0;
+      snprintf(localErrorMessage, sizeof(localErrorMessage), 
+        "\nField #%d: Part ID must be a positive integer.", 8 + i * 2);
+      strcat_s(errorMessage, sizeof(errorMessage), localErrorMessage);
+    }
+    else if (!validatePartIDInOrder(partID, parts, partCount)) {
+      isAllPartsValid = 0;
+      snprintf(localErrorMessage, sizeof(localErrorMessage),
+        "\nField #%d: Part ID %d does not exist in the parts database.", 7 + i * 2, partID);
+      strcat_s(errorMessage, sizeof(errorMessage), localErrorMessage);
+    }
+    if (!isInteger(fields[8 + i * 2]) || quantityOrdered <= 0) {
+      isAllPartsValid = 0;
+      snprintf(localErrorMessage, sizeof(localErrorMessage), 
+        "\nField #%d: Quantity ordered must be a positive integer.", 9 + i * 2);
+      strcat_s(errorMessage, sizeof(errorMessage), localErrorMessage);
+    }
+  }
+  // Validate order total and total parts
+  if (isAllPartsValid) {
+    int calculatedTotalParts = 0;
+    float calculatedOrderTotal = 0.0;
+    for (int i = 0; i < numOfParsedOrderedParts; i++) {
+      int partID = 0;
+      int quantityOrdered = 0;
+      sscanf_s(fields[7 + i * 2], "%d", &partID);
+      sscanf_s(fields[8 + i * 2], "%d", &quantityOrdered);
+      for (int j = 0; j < partCount; j++) {
+        if (parts[j].partID == partID) {
+          calculatedTotalParts += quantityOrdered;
+          calculatedOrderTotal += parts[j].partCost * quantityOrdered;
+          break;
+        }
+      }
+    }
+    if (calculatedTotalParts != totalParts) {
+      strcat_s(errorMessage, sizeof(errorMessage), 
+        "\nField #5: Calculated total parts does not match the provided total parts.");
+    }
+    if (calculatedOrderTotal != orderTotal) {
+      strcat_s(errorMessage, sizeof(errorMessage), 
+        "\nField #7: Calculated order total does not match the provided order total.");
+    }
+  }
+
 
   if (strlen(errorMessage) > 60) { // When there is at least one error
     printf("%s\n", errorMessage);
@@ -288,6 +405,63 @@ int validatePartStatus(char* quantityOnHand, char* partStatus) {
     return 0; 
   }
   return 1; 
+}
+
+int validateOrderID(const char* orderID) {
+  if (strlen(orderID) != 11) {
+    return 0; 
+  }
+  if (!isInteger(orderID)) {
+    return 0; 
+  }
+  int year = (orderID[0] - '0') * 1000 + (orderID[1] - '0') * 100 + (orderID[2] - '0') * 10 + (orderID[3] - '0');
+  int month = (orderID[4] - '0') * 10 + (orderID[5] - '0');
+  int day = (orderID[6] - '0') * 10 + (orderID[7] - '0');
+  if (!isValidDate(year, month, day)) {
+    return 0; 
+  }
+  return 1;
+}
+
+int validateOrderStatus(char* orderStatus) {
+  if (!isInteger(orderStatus)) {
+    return 0;
+  }
+  int orderStatusValue = 0;
+  sscanf_s(orderStatus, "%d", &orderStatusValue);
+  if (orderStatusValue != 0 && orderStatusValue != 1 && orderStatusValue != 99 && orderStatusValue != 500) {
+    return 0;
+  }
+  return 1; 
+}
+
+int validateCustomerIDInOrder(char* customerID, const Customer* customers, int customerCount) {
+  if (!isInteger(customerID)) {
+    return 0; 
+  }
+  int customerIDValue = 0;
+  sscanf_s(customerID, "%d", &customerIDValue);
+  if (customerIDValue <= 0) {
+    return 0; 
+  }
+  for (int i = 0; i < customerCount; i++) {
+    if (customers[i].customerID == customerIDValue) {
+      return 1; // Valid customer ID found
+    }
+  }
+  return 0; 
+}
+
+int validatePartIDInOrder(int partID, const Part* parts, int partCount) {
+  if (partID <= 0) {
+    return 0; // Invalid part ID
+  }
+  for (int i = 0; i < partCount; i++) {
+    if (parts[i].partID == partID) {
+      return 1; // Valid part ID found
+    }
+  }
+  return 0; // Part ID not found
 }
 
 int isInteger(const char* str) {

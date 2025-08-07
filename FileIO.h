@@ -11,6 +11,9 @@ Customer parseFieldsToCustomer(const char** fields);
 int loadParts(Part* parts, const char* fileName);
 Part parseFieldsToPart(const char** fields);
 
+int loadOrders(Order* orders, const Part* parts, int partCount, const Customer* customers, int customerCount, const char* fileName);
+Order parseFieldsToOrder(const char** fields);
+
 int splitLine(char* line, char** fields, int fieldLimit, char delimiter);
 
 #endif 

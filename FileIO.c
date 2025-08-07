@@ -11,12 +11,12 @@
 
 int loadCustomers(Customer* customers, const char* fileName) {
   int customerCount = 0;
+  int lineNumber = 0; // For error reporting
   FILE* file = NULL;
   errno_t err = fopen_s(&file, fileName, "r");
   if (err != 0 || file == NULL) {
     customerCount = 0;
     // TODO Log failure to open file
-    printf("Failure to open file\n");
     return 0;
   }
   char line[1024];
@@ -47,7 +47,7 @@ int loadCustomers(Customer* customers, const char* fileName) {
       // TODO Log incorrect format
       continue; // Read next line
     }
-    if (!validateCustomerFields(fields, customerCount + 1)) {
+    if (!validateCustomerFields(fields, lineNumber)) {
       // No need to log here since validate already did
       continue;
     }
@@ -78,6 +78,7 @@ Customer parseFieldsToCustomer(const char** fields) {
 
 int loadParts(Part* parts, const char* fileName) {
   int partCount = 0;
+  int lineNumber = 0; // For error reporting
   FILE* file = NULL;
   errno_t err = fopen_s(&file, fileName, "r");
   if (err != 0 || file == NULL) {
@@ -89,6 +90,7 @@ int loadParts(Part* parts, const char* fileName) {
   partCount = 0;
   // Read each line from the file
   while (fgets(line, sizeof(line), file) != NULL) {
+    lineNumber++;
     // Check if over limit 
     if (partCount >= PARTS_LIMIT) {
       // TODO Log part limit full
@@ -113,7 +115,7 @@ int loadParts(Part* parts, const char* fileName) {
       // TODO Log incorrect format
       continue; // Read next line
     }
-    if (!validatePartFields(fields, partCount + 1)) {
+    if (!validatePartFields(fields, lineNumber)) {
       // No need to log here since validate already did
       continue;
     }
@@ -136,6 +138,76 @@ Part parseFieldsToPart(const char** fields) {
   sscanf_s(fields[5], "%d", &newPart.partStatus);
   sscanf_s(fields[6], "%d", &newPart.partID);
   return newPart;
+}
+
+int loadOrders(Order* orders, const Part* parts, int partCount, const Customer* customers, int customerCount, const char* fileName) {
+  int orderCount = 0;
+  int lineNumber = 0; // For error reporting
+  FILE* file = NULL;
+  errno_t err = fopen_s(&file, fileName, "r");
+  if (err != 0 || file == NULL) {
+    orderCount = 0;
+    // TODO Log failure to open file
+    return 0;
+  }
+  char line[2048];
+  // Read each line from the file
+  while (fgets(line, sizeof(line), file) != NULL) {
+    lineNumber++;
+    // Check if over limit 
+    if (orderCount >= ORDERS_LIMIT) {
+      // TODO Log order limit full
+      break;
+    }
+    // Check if line is too long
+    if (strchr(line, '\n') == NULL) {
+      // TODO Log line too long
+      // Discard rest of the line
+      while (1) {
+        char extra = fgetc(file);
+        if (extra == '\n' || extra == EOF) {
+          break;
+        }
+      }
+      continue; // Read next line
+    }
+    // Split line into fields
+    char* fields[NUMBER_OF_ORDER_FIELDS + PARTS_LIMIT * 2];
+    int fieldCount = splitLine(line, fields, NUMBER_OF_ORDER_FIELDS + PARTS_LIMIT * 2, '|');
+    
+    // Check if the number of fields is valid
+    if (fieldCount < NUMBER_OF_ORDER_FIELDS + 2 || fieldCount % 2 == 0) { 
+      // TODO Log incorrect format
+      continue; // Read next line
+    }
+    if (!validateOrderFields(fields, fieldCount, lineNumber, parts, partCount, customers, customerCount)) {
+      // No need to log here since validate already did
+      continue;
+    }
+    // Fields should be all valid at this point
+    orders[orderCount] = parseFieldsToOrder(fields);
+    orderCount++;
+  }
+  
+  return orderCount;
+}
+
+Order parseFieldsToOrder(const char** fields) {
+  Order newOrder;
+  sscanf_s(fields[0], "%lld", &newOrder.orderID);
+  strcpy_s(newOrder.orderDate, sizeof(newOrder.orderDate), fields[1]);
+  sscanf_s(fields[2], "%d", &newOrder.orderStatus);
+  sscanf_s(fields[3], "%d", &newOrder.customerID);
+  sscanf_s(fields[4], "%f", &newOrder.orderTotal);
+  sscanf_s(fields[5], "%d", &newOrder.distinctParts);
+  sscanf_s(fields[6], "%d", &newOrder.totalParts);
+  // Parse ordered parts
+  for (int i = 0; i < newOrder.distinctParts; i++) {
+    sscanf_s(fields[7 + i * 2], "%d", &newOrder.orderedParts[i].partID);
+    sscanf_s(fields[8 + i * 2], "%d", &newOrder.orderedParts[i].quantityOrdered);
+  }
+  
+  return newOrder;
 }
 
 int splitLine(char* line, char** fields, int fieldLimit, char delimiter) {
