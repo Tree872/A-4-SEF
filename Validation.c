@@ -230,17 +230,15 @@ int validateOrderFields(char** fields, int numOfReadFields, int lineNumber, cons
         }
       }
     }
-    if (calculatedTotalParts != totalParts) {
+    if (isInteger(fields[6]) && calculatedTotalParts != totalParts) {
       strcat_s(errorMessage, sizeof(errorMessage), 
-        "\nField #5: Calculated total parts does not match the provided total parts.");
+        "\nField #7: Calculated total parts does not match the provided total parts.");
     }
-    if (calculatedOrderTotal != orderTotal) {
+    if (isNumber(fields[4]) && calculatedOrderTotal != orderTotal) {
       strcat_s(errorMessage, sizeof(errorMessage), 
-        "\nField #7: Calculated order total does not match the provided order total.");
+        "\nField #5: Calculated order total does not match the provided order total.");
     }
   }
-
-
   if (strlen(errorMessage) > 60) { // When there is at least one error
     printf("%s\n", errorMessage);
     // TODO Log the error message
