@@ -6,7 +6,7 @@
 #define PARTS_LIMIT 50
 #define NUMBER_OF_CUSTOMER_FIELDS 12
 #define NUMBER_OF_PART_FIELDS 7
-#define NUMBER_OF_ORDER_FIELDS 7
+#define NUMBER_OF_ORDER_FIELDS 7 // Excludes ordered parts fields
 
 #define CUSTOMERS_FILE "customers.db"
 #define PARTS_FILE "parts.db"

@@ -60,10 +60,15 @@ int main() {
       default:
         printf("Invalid choice. Please choose between option 1-5.\n");
     }
-
-  }
-  
+  } 
 }
+// FUNCTION: printCustomer
+// DESCRIPTION:
+//    Prints the details of a Customer struct in a formatted way.
+// PARAMETERS:
+//    const Customer* customer: Pointer to the Customer struct to be printed.
+// RETURNS:
+//    void
 void printCustomer(const Customer* customer) {
   printf("Name         : %s\n", customer->customerName);
   printf("Address      : %s\n", customer->customerAddress);
@@ -79,6 +84,13 @@ void printCustomer(const Customer* customer) {
   printf("Join Date         : %s\n", customer->customerJoinDate);
   printf("---------------------\n");
 }
+// FUNCTION: printPart
+// DESCRIPTION:
+//    Prints the details of a Part struct in a formatted way.
+// PARAMETERS:
+//    const Part* p: Pointer to the Part struct to be printed.
+// RETURNS:
+//    void
 void printPart(const Part* p) {
   if (p == NULL) {
     printf("Invalid Part\n");
@@ -101,6 +113,13 @@ void printPart(const Part* p) {
 
   printf("---------------------\n");
 }
+// FUNCTION: printOrder
+// DESCRIPTION:
+//    Prints the details of an Order struct in a formatted way.
+// PARAMETERS:
+//    const Order* order: Pointer to the Order struct to be printed.
+// RETURNS:
+//    void
 void printOrder(const Order* order) {
   if (order == NULL) {
     printf("Invalid Order\n");
@@ -129,7 +148,14 @@ void printOrder(const Order* order) {
   }
   printf("---------------------\n");
 }
-
+// FUNCTION: printCustomers
+// DESCRIPTION:
+//    Prints the details of all customers in the provided array.
+// PARAMETERS:
+//    const Customer* customers: Pointer to the array of Customer structs.
+//    int count: Number of customers in the array.
+// RETURNS:
+//    void
 void printCustomers(const Customer* customers, int count) {
   if (count == 0) {
     printf("No customers to display. Try loading databases first.\n");
@@ -139,6 +165,14 @@ void printCustomers(const Customer* customers, int count) {
     printCustomer(&customers[i]);
   }
 }
+// FUNCTION: printParts
+// DESCRIPTION:
+//    Prints the details of all parts in the provided array.
+// PARAMETERS:
+//    const Part* parts: Pointer to the array of Part structs.
+//    int count: Number of parts in the array.
+// RETURNS:
+//    void
 void printParts(const Part* parts, int count) {
   if (count == 0) {
     printf("No parts to display. Try loading databases first.\n");
@@ -148,6 +182,14 @@ void printParts(const Part* parts, int count) {
     printPart(&parts[i]);
   }
 }
+// FUNCTION: printOrders
+// DESCRIPTION:
+//    Prints the details of all orders in the provided array.
+// PARAMETERS:
+//    const Order* orders: Pointer to the array of Order structs.
+//    int count: Number of orders in the array.
+// RETURNS:
+//    void
 void printOrders(const Order* orders, int count) {
   if (count == 0) {
     printf("No orders to display. Try loading databases first.\n");
@@ -157,6 +199,11 @@ void printOrders(const Order* orders, int count) {
     printOrder(&orders[i]);
   }
 }
+// FUNCTION: printMenu
+// DESCRIPTION:
+//    Prints the main menu options for the user.
+// PARAMETERS:
+//    void
 void printMenu() {
   printf("Menu:\n");
   printf("1. Load Database(s)\n");
