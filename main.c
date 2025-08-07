@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "Validation.h"
 #include "FileIO.h"
 #include "Customer.h"
@@ -10,23 +11,60 @@
 void printCustomer(const Customer* customer);
 void printPart(const Part* p);
 void printOrder(const Order* order);
+void printCustomers(const Customer* customers, int count);
+void printParts(const Part* parts, int count);
+void printOrders(const Order* orders, int count);
+void printMenu();
+void promptInt(const char* prompt, int* input);
+void flushInputStream();
 
 int main() {
   Customer *customers = (Customer*)malloc(CUSTOMERS_LIMIT * sizeof(Customer)); 
   Part* parts = (Part*)malloc(PARTS_LIMIT * sizeof(Part));
   Order* orders = (Order*)malloc(ORDERS_LIMIT * sizeof(Order));
-  int customerCount = loadCustomers(customers, CUSTOMERS_FILE);
-  int partCount = loadParts(parts, PARTS_FILE);
-  // Order must be loaded after customers and parts
-  int orderCount = loadOrders(orders, parts, partCount, customers, customerCount, ORDERS_FILE);
-  printOrder(&orders[0]);
+  int customerCount = 0;
+  int partCount = 0;
+  int orderCount = 0;
+
+  while (1) {
+    int choice;
+    printMenu();
+    promptInt("Enter your choice (1-5): ", &choice);
+    switch (choice) {
+      case 1: {
+        customerCount = loadCustomers(customers, CUSTOMERS_FILE);
+        partCount = loadParts(parts, PARTS_FILE);
+        orderCount = loadOrders(orders, parts, partCount, customers, customerCount, ORDERS_FILE);
+        printf("Loaded %d customers, %d parts, and %d orders.\n", customerCount, partCount, orderCount);
+        break;
+      }
+      case 2: {
+        printCustomers(customers, customerCount);
+        break;
+      }
+      case 3: {
+        printParts(parts, partCount);
+        break;
+      }
+      case 4: {
+        printOrders(orders, orderCount);
+        break;
+      }
+      case 5: {
+        free(customers);
+        free(parts);
+        free(orders);
+        printf("Memory freed. Exiting program.\n");
+        return 0;
+      }
+      default:
+        printf("Invalid choice. Please choose between option 1-5.\n");
+    }
+
+  }
   
-  free(customers);
-  free(parts);
-  free(orders);
 }
 void printCustomer(const Customer* customer) {
-  printf("---------------------\n");
   printf("Name             : %s\n", customer->customerName);
   printf("Address          : %s\n", customer->customerAddress);
   printf("City             : %s\n", customer->customerCity);
@@ -50,7 +88,6 @@ void printPart(const Part* p) {
     printf("Invalid Part\n");
     return;
   }
-  printf("---------------------\n");
   printf("Part ID        : %d\n", p->partID);
   printf("Name           : %s\n", p->partName);
   printf("Number         : %s\n", p->partNumber);
@@ -68,22 +105,29 @@ void printPart(const Part* p) {
   else if (p->partStatus < 0) {
     printf("Deficit (%d units short)\n", -p->partStatus);
   }
-  else {
-    printf("Unknown Status (%d)\n", p->partStatus);
-  }
 
   printf("---------------------\n");
 }
-
 void printOrder(const Order* order) {
   if (order == NULL) {
     printf("Invalid Order\n");
     return;
   }
-  printf("---------------------\n");
   printf("Order ID      : %lld\n", order->orderID);
   printf("Order Date    : %s\n", order->orderDate);
-  printf("Status        : %d\n", order->orderStatus);
+  printf("Status        : \n");
+  if (order->orderStatus == 0) {
+    printf("Unprocessed\n");
+  }
+  else if (order->orderStatus == 1) {
+    printf("Fulfilled\n");
+  }
+  else if (order->orderStatus == 99) {
+    printf("Insufficient Parts\n");
+  }
+  else if (order->orderStatus == 500) {
+    printf("Credit Exceeded\n");
+  }
   printf("Customer ID   : %d\n", order->customerID);
   printf("Total Amount  : $%.2f\n", order->orderTotal);
   printf("Distinct Parts: %d\n", order->distinctParts);
@@ -93,4 +137,85 @@ void printOrder(const Order* order) {
            order->orderedParts[i].partID, order->orderedParts[i].quantityOrdered);
   }
   printf("---------------------\n");
+}
+
+void printCustomers(const Customer* customers, int count) {
+  if (count == 0) {
+    printf("No customers to display. Try loading databases first.\n");
+    return;
+  }
+  for (int i = 0; i < count; i++) {
+    printCustomer(&customers[i]);
+  }
+}
+void printParts(const Part* parts, int count) {
+  if (count == 0) {
+    printf("No parts to display. Try loading databases first.\n");
+    return;
+  }
+  for (int i = 0; i < count; i++) {
+    printPart(&parts[i]);
+  }
+}
+void printOrders(const Order* orders, int count) {
+  if (count == 0) {
+    printf("No orders to display. Try loading databases first.\n");
+    return;
+  }
+  for (int i = 0; i < count; i++) {
+    printOrder(&orders[i]);
+  }
+}
+void printMenu() {
+  printf("Menu:\n");
+  printf("1. Load Database(s)\n");
+  printf("2. List Valid Customer(s)\n");
+  printf("3. List Valid Part(s)\n");
+  printf("4. List Valid Order(s)\n");
+  printf("5. Free memory and exit\n");
+}
+// FUNCTION: promptInt
+// DESCRIPTION:
+//		Prompts the user for an integer input and validates it.
+//		Continues to prompt until a valid integer is entered.
+// PARAMETERS:
+//		const char* prompt : The prompt message to display to the user.
+//		int* input : Pointer to the integer variable where the input will be stored.
+// RETURNS:
+//		void
+void promptInt(const char* prompt, int* input) {
+  char inputBuffer[100];
+  while (1) {
+    printf("%s", prompt);
+    fgets(inputBuffer, sizeof(inputBuffer), stdin);
+    // When user input exceeds buffer amount
+    if (!strchr(inputBuffer, '\n')) {
+      flushInputStream();
+      printf("Input exceeds buffer size. Please try again.\n");
+      continue;
+    }
+
+    inputBuffer[strlen(inputBuffer) - 1] = '\0'; // Remove the trailing newline 
+
+    if (isInteger(inputBuffer)) {
+      sscanf_s(inputBuffer, "%d", input); // Writes directly into input
+      return;
+    }
+    else {
+      printf("Input must be a valid integer. Try again\n");
+    }
+  }
+}
+// FUNCTION: flushInputStream
+// DESCRIPTION:
+//		Flushes the input stream to remove any remaining characters.
+// PARAMETERS:
+//		void
+// RETURNS:
+//		void
+void flushInputStream() {
+  char extra = ' ';
+  while (extra != '\n' && extra != EOF) {
+    extra = getchar();
+  }
 }

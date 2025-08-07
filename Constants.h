@@ -11,5 +11,6 @@
 #define CUSTOMERS_FILE "customers.db"
 #define PARTS_FILE "parts.db"
 #define ORDERS_FILE "orders.db"
+#define LOG_FILE "runtimelog.txt"
 
 #endif

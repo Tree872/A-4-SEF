@@ -3,6 +3,7 @@
 #include "Part.h"
 #include "Order.h"
 #include "Validation.h"
+#include "Logger.h"
 #include "Constants.h"
 #include <errno.h>
 #include <stdio.h>
@@ -24,22 +25,28 @@ int loadCustomers(Customer* customers, const char* fileName) {
   FILE* file = NULL;
   errno_t err = fopen_s(&file, fileName, "r");
   if (err != 0 || file == NULL) {
-    customerCount = 0;
-    // TODO Log failure to open file
+    logGeneric("Failed to open customers database.");
     return 0;
   }
+  char errorMessage[256];
   char line[1024];
   customerCount = 0;
   // Read each line from the file
   while (fgets(line, sizeof(line), file) != NULL) {
+    // Skip empty lines
+    if (line[0] == '\n' || line[0] == '\r') {
+      continue; // Read next line
+    }
+    lineNumber++;
     // Check if over limit 
     if (customerCount >= CUSTOMERS_LIMIT) {
-    // TODO Log customer limit full
+      logGeneric("Customer limit reached when loading from database, cannot load more customers.");
       break;
     }
     // Check if line is too long
-    if (strchr(line, '\n') == NULL) {
-      // TODO Log line too long
+    if (strlen(line) == sizeof(line) - 1) {
+      snprintf(errorMessage, sizeof(errorMessage), "In customers database line %d: Line is too long.", lineNumber);
+      logGeneric(errorMessage);
       // Discard rest of the line
       while (1) {
         char extra = fgetc(file);
@@ -53,7 +60,9 @@ int loadCustomers(Customer* customers, const char* fileName) {
     char* fields[NUMBER_OF_CUSTOMER_FIELDS];
     int fieldCount = splitLine(line, fields, NUMBER_OF_CUSTOMER_FIELDS, '|');
     if (fieldCount != NUMBER_OF_CUSTOMER_FIELDS) {
-      // TODO Log incorrect format
+      snprintf(errorMessage, sizeof(errorMessage), "In customers database line %d: Incorrect number of fields (%d expected, found %d)", 
+        lineNumber, NUMBER_OF_CUSTOMER_FIELDS, fieldCount);
+      logGeneric(errorMessage);
       continue; // Read next line
     }
     if (!validateCustomerFields(fields, lineNumber)) {
@@ -108,22 +117,24 @@ int loadParts(Part* parts, const char* fileName) {
   errno_t err = fopen_s(&file, fileName, "r");
   if (err != 0 || file == NULL) {
     partCount = 0;
-    // TODO Log failure to open file
+    logGeneric("Failed to open parts database.");
     return 0;
   }
   char line[1024];
+  char errorMessage[256];
   partCount = 0;
   // Read each line from the file
   while (fgets(line, sizeof(line), file) != NULL) {
     lineNumber++;
     // Check if over limit 
     if (partCount >= PARTS_LIMIT) {
-      // TODO Log part limit full
+      logGeneric("Part limit reached when loading from database, cannot load more parts.");
       break;
     }
     // Check if line is too long
-    if (strchr(line, '\n') == NULL) {
-      // TODO Log line too long
+    if (strlen(line) == sizeof(line) - 1) {
+      snprintf(errorMessage, sizeof(errorMessage), "In parts database line %d: Line is too long.", lineNumber);
+      logGeneric(errorMessage);
       // Discard rest of the line
       while (1) {
         char extra = fgetc(file);
@@ -137,7 +148,9 @@ int loadParts(Part* parts, const char* fileName) {
     char* fields[NUMBER_OF_PART_FIELDS];
     int fieldCount = splitLine(line, fields, NUMBER_OF_PART_FIELDS, '|');
     if (fieldCount != NUMBER_OF_PART_FIELDS) {
-      // TODO Log incorrect format
+      snprintf(errorMessage, sizeof(errorMessage), "In parts database line %d: Incorrect number of fields (%d expected, found %d)", 
+        lineNumber, NUMBER_OF_PART_FIELDS, fieldCount);
+      logGeneric(errorMessage);
       continue; // Read next line
     }
     if (!validatePartFields(fields, lineNumber)) {
@@ -193,21 +206,23 @@ int loadOrders(Order* orders, const Part* parts, int partCount, const Customer* 
   errno_t err = fopen_s(&file, fileName, "r");
   if (err != 0 || file == NULL) {
     orderCount = 0;
-    // TODO Log failure to open file
+    logGeneric("Failed to open orders database.");
     return 0;
   }
+  char errorMessage[256];
   char line[2048];
   // Read each line from the file
   while (fgets(line, sizeof(line), file) != NULL) {
     lineNumber++;
     // Check if over limit 
     if (orderCount >= ORDERS_LIMIT) {
-      // TODO Log order limit full
+      logGeneric("Order limit reached when loading from database, cannot load more orders.");
       break;
     }
     // Check if line is too long
-    if (strchr(line, '\n') == NULL) {
-      // TODO Log line too long
+    if (strlen(line) == sizeof(line) - 1) {
+      snprintf(errorMessage, sizeof(errorMessage), "In orders database line %d: Line is too long.", lineNumber);
+      logGeneric(errorMessage);
       // Discard rest of the line
       while (1) {
         char extra = fgetc(file);
@@ -223,7 +238,8 @@ int loadOrders(Order* orders, const Part* parts, int partCount, const Customer* 
     
     // Check if the number of fields is valid
     if (fieldCount < NUMBER_OF_ORDER_FIELDS + 2 || fieldCount % 2 == 0) { 
-      // TODO Log incorrect format
+      logGeneric("Incorrect number of fields in orders database.");
+      logGeneric("Each order must have at least 9 fields and an odd number of fields to be valid.");
       continue; // Read next line
     }
     if (!validateOrderFields(fields, fieldCount, lineNumber, parts, partCount, customers, customerCount)) {

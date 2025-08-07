@@ -126,12 +126,14 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Customer.h" />
     <ClInclude Include="FileIO.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="Order.h" />
     <ClInclude Include="Part.h" />
     <ClInclude Include="Validation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileIO.c" />
+    <ClCompile Include="Logger.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="Validation.c" />
   </ItemGroup>

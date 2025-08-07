@@ -2,6 +2,7 @@
 #include "Customer.h"
 #include "Part.h"
 #include "Order.h"
+#include "Logger.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -40,7 +41,7 @@ int validateCustomerFields(char** fields, int lineNumber) {
   // Validate province
   if (!validateProvince(fields[3])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nField #4: Customer province must be a valid canadian province abbreviations");
+      "\nField #4: Customer province must be a valid canadian province abbreviation");
   }
   // Validate postal code
   if (!validatePostalCode(fields[4])) {
@@ -87,8 +88,7 @@ int validateCustomerFields(char** fields, int lineNumber) {
       "\nField #12: Customer join date must be in YYYY-MM-DD format and is a valid date.");
   }
   if (strlen(errorMessage) > 60) { // When there is at least one error
-    printf("%s\n", errorMessage);
-    // TODO Log the error message
+    logGeneric(errorMessage);
     return 0; 
   }
   return 1;
@@ -147,8 +147,7 @@ int validatePartFields(char** fields, int lineNumber) {
   }
 
   if (strlen(errorMessage) > 60) { // When there is at least one error
-    printf("%s\n", errorMessage);
-    // TODO Log the error message
+    logGeneric(errorMessage);
     return 0; 
   }
   return 1;
@@ -273,8 +272,7 @@ int validateOrderFields(char** fields, int numOfReadFields, int lineNumber, cons
     }
   }
   if (strlen(errorMessage) > 60) { // When there is at least one error
-    printf("%s\n", errorMessage);
-    // TODO Log the error message
+    logGeneric(errorMessage);
     return 0; 
   }
   return 1;
