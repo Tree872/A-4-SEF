@@ -52,14 +52,14 @@ int loadCustomers(Customer* customers, const char* fileName) {
       continue;
     }
     // Fields should be all valid at this point
-    customers[customerCount] = parseFieldsToCustomers(fields);
+    customers[customerCount] = parseFieldsToCustomer(fields);
     customerCount++;
   }
   fclose(file);
   return customerCount;
 }
 
-Customer parseFieldsToCustomers(const char** fields) {
+Customer parseFieldsToCustomer(const char** fields) {
   Customer newCustomer;
   strcpy_s(newCustomer.customerName, sizeof(newCustomer.customerName), fields[0]);
   strcpy_s(newCustomer.customerAddress, sizeof(newCustomer.customerAddress), fields[1]);
@@ -118,7 +118,7 @@ int loadParts(Part* parts, const char* fileName) {
       continue;
     }
     // Fields should be all valid at this point
-    parts[partCount] = parseFieldsToParts(fields);
+    parts[partCount] = parseFieldsToPart(fields);
     partCount++;
   }
 
@@ -126,7 +126,7 @@ int loadParts(Part* parts, const char* fileName) {
   return partCount;
 }
 
-Part parseFieldsToParts(const char** fields) {
+Part parseFieldsToPart(const char** fields) {
   Part newPart;
   strcpy_s(newPart.partName, sizeof(newPart.partName), fields[0]);
   strcpy_s(newPart.partNumber, sizeof(newPart.partNumber), fields[1]);

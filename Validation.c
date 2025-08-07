@@ -13,66 +13,70 @@ int validateCustomerFields(char** fields, int lineNumber) {
   char errorMessage[1024];
   snprintf(errorMessage, sizeof(errorMessage), "Error when loading  customers database: Line %d: ", lineNumber);
   // Validate name
-  if (fields[0] == NULL || strlen(fields[0]) == 0 || strlen(fields[0]) > 50) {
+  if (strlen(fields[0]) == 0 || strlen(fields[0]) > 50) {
     strcat_s(errorMessage, sizeof(errorMessage), 
       "\nCustomer name must neither be blank or over 50 characters");
   }
   // Validate address
-  if (fields[1] == NULL || strlen(fields[1]) == 0 || strlen(fields[1]) > 100) {
+  if (strlen(fields[1]) == 0 || strlen(fields[1]) > 100) {
     strcat_s(errorMessage, sizeof(errorMessage), 
       "\nCustomer address must neither be blank or over 100 characters.");
   }
   // Validate city
-  if (fields[2] == NULL || strlen(fields[2]) == 0 || strlen(fields[2]) > 100) {
+  if (strlen(fields[2]) == 0 || strlen(fields[2]) > 100) {
     strcat_s(errorMessage, sizeof(errorMessage), 
       "\nCustomer city must neither be blank or over 100 characters. ");
   }
   // Validate province
-  if (fields[3] == NULL || !validateProvince(fields[3])) {
+  if (!validateProvince(fields[3])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
       "\nCustomer province must be a valid canadian province abbreviations");
   }
   // Validate postal code
-  if (fields[4] == NULL || !validatePostalCode(fields[4])) {
+  if (!validatePostalCode(fields[4])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
       "\nCustomer postal code must be in ANANAN format (where A is an alphabetic letter and N is a numeric digit)");
   }
   // Validate phone number
-  if (fields[5] == NULL || !validatePhoneNumber(fields[5])) {
+  if (!validatePhoneNumber(fields[5])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
       "\nCustomer phone number must be in ###-###-#### format");
   }
   // Validate email
-  if (fields[6] == NULL || !validateEmail(fields[6])) {
+  if (!validateEmail(fields[6])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
       "\nCustomer email address must a valid email address");
   }
   // Validate customer ID
-  if (fields[7] == NULL || !isInteger(fields[7]) || fields[7][0] == '-') {
+  int customerID = 0;
+  sscanf_s(fields[7], "%d", &customerID);
+  if (!isInteger(fields[7]) || customerID <= 0) {
     strcat_s(errorMessage, sizeof(errorMessage), 
       "\nCustomer ID must be a positive int.");
   }
   // Validate credit limit
-  if (fields[8] == NULL || !isNumber(fields[8]) || fields[8][0] == '-') {
+  float creditLimit = 0.0;
+  sscanf_s(fields[8], "%f", &creditLimit);
+  if (!isNumber(fields[8]) || creditLimit <= 0.0) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer credit limit must be a positive number. ");
+      "\nCustomer credit limit must be greater than 0. ");
   }
   // Validate account balance
-  if (fields[9] == NULL || !isNumber(fields[9]) || fields[9][0] == '-') {
+  if (!isNumber(fields[9]) || fields[9][0] == '-') {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer account balance must be a positive number. ");
+      "\nCustomer account balance greater than or equal to 0. ");
   }
   // Validate last payment date (optional)
-  if (fields[10] != NULL && strlen(fields[10]) > 0 && !validateDate(fields[10])) {
+  if (strlen(fields[10]) > 0 && !validateDate(fields[10])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
-      "\nCustomer last payment date must be in YYYY-MM-DD format, is a valid date or blank.");
+      "\nCustomer last payment date must be either blank or in YYYY-MM-DD format and is a valid date.");
   }
   // Validate join date
   if (fields[11] == NULL || !validateDate(fields[11])) {
     strcat_s(errorMessage, sizeof(errorMessage), 
       "\nCustomer join date must be in YYYY-MM-DD format and is a valid date.");
   }
-  if (strlen(errorMessage) > 60) {
+  if (strlen(errorMessage) > 60) { // When there is at least one error
     // TODO Log the error message
     return 0; 
   }
@@ -120,7 +124,7 @@ int validatePartFields(char** fields, int lineNumber) {
       "\nPart ID must be a positive integer.");
   }
 
-  if (strlen(errorMessage) > 60) {
+  if (strlen(errorMessage) > 60) { // When there is at least one error
     printf("%s\n", errorMessage);
     // TODO Log the error message
     return 0; 
@@ -336,7 +340,7 @@ int isNumber(const char* str) {
 }
 
 int isValidDate(int year, int month, int day) {
-  if (year < 1900 || year > 2100 || month < 1 || month > 12 || day < 1) {
+  if (year < 2000 || year > 2100 || month < 1 || month > 12 || day < 1) {
     return 0; 
   }
 
