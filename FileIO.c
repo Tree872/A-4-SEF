@@ -125,6 +125,10 @@ int loadParts(Part* parts, const char* fileName) {
   partCount = 0;
   // Read each line from the file
   while (fgets(line, sizeof(line), file) != NULL) {
+    // Skip empty lines
+    if (line[0] == '\n' || line[0] == '\r') {
+      continue; // Read next line
+    }
     lineNumber++;
     // Check if over limit 
     if (partCount >= PARTS_LIMIT) {
@@ -213,6 +217,10 @@ int loadOrders(Order* orders, const Part* parts, int partCount, const Customer* 
   char line[2048];
   // Read each line from the file
   while (fgets(line, sizeof(line), file) != NULL) {
+    // Skip empty lines
+    if (line[0] == '\n' || line[0] == '\r') {
+      continue; // Read next line
+    }
     lineNumber++;
     // Check if over limit 
     if (orderCount >= ORDERS_LIMIT) {
