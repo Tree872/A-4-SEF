@@ -65,22 +65,18 @@ int main() {
   
 }
 void printCustomer(const Customer* customer) {
-  printf("Name             : %s\n", customer->customerName);
-  printf("Address          : %s\n", customer->customerAddress);
-  printf("City             : %s\n", customer->customerCity);
-  printf("Province         : %s\n", customer->customerProvince);
-  printf("Postal Code      : %s\n", customer->customerPostalCode);
-  printf("Phone            : %s\n", customer->customerPhone);
-  printf("Email            : %s\n", customer->customerEmail);
-  printf("Customer ID      : %d\n", customer->customerID);
-  printf("Credit Limit     : %.2f\n", customer->customerCreditLimit);
-  printf("Account Balance  : %.2f\n", customer->currentAccountBalance);
+  printf("Name         : %s\n", customer->customerName);
+  printf("Address      : %s\n", customer->customerAddress);
+  printf("Customer ID  : %d,           City : %s\n", customer->customerID, customer->customerCity);
+  printf("Province     : %s,           Postal Code : %s\n", customer->customerProvince, customer->customerPostalCode);
+  printf("Phone        : %s, Email : %s\n", customer->customerPhone, customer->customerEmail);
+  printf("Credit Limit : %.2f,      Account Balance : %.2f\n", customer->customerCreditLimit, customer->currentAccountBalance);
   if (customer->lastPaymentMade[0] != '\0')
-    printf("Last Payment Made: %s\n", customer->lastPaymentMade);
+    printf("Last Payment Made : %s\n", customer->lastPaymentMade);
   else {
-    printf("Last Payment Made: %s\n", "N/A");
+    printf("Last Payment Made : %s\n", "N/A");
   }
-  printf("Join Date        : %s\n", customer->customerJoinDate);
+  printf("Join Date         : %s\n", customer->customerJoinDate);
   printf("---------------------\n");
 }
 void printPart(const Part* p) {
@@ -88,23 +84,20 @@ void printPart(const Part* p) {
     printf("Invalid Part\n");
     return;
   }
-  printf("Part ID        : %d\n", p->partID);
-  printf("Name           : %s\n", p->partName);
-  printf("Number         : %s\n", p->partNumber);
-  printf("Location       : %s\n", p->partLocation);
-  printf("Cost           : $%.2f\n", p->partCost);
-  printf("Quantity       : %d\n", p->quantityOnHand);
-
-  printf("Status         : ");
+  printf("Name    : %s\n", p->partName);
+  printf("Number  : %s\n", p->partNumber);
+  printf("Status  : ");
   if (p->partStatus == 0) {
-    printf("In Stock (Quantity > 100)\n");
+    printf("In Stock\n");
   }
   else if (p->partStatus == 99) {
-    printf("Low Stock (Quantity < 100)\n");
+    printf("Low Stock\n");
   }
   else if (p->partStatus < 0) {
     printf("Deficit (%d units short)\n", -p->partStatus);
   }
+  printf("Part ID : %d,    \tLocation : %s\n", p->partID, p->partLocation);
+  printf("Cost    : $%.2f, \tQuantity : %d\n", p->partCost, p->quantityOnHand);
 
   printf("---------------------\n");
 }
@@ -115,7 +108,7 @@ void printOrder(const Order* order) {
   }
   printf("Order ID      : %lld\n", order->orderID);
   printf("Order Date    : %s\n", order->orderDate);
-  printf("Status        : \n");
+  printf("Status        : ");
   if (order->orderStatus == 0) {
     printf("Unprocessed\n");
   }
@@ -128,10 +121,8 @@ void printOrder(const Order* order) {
   else if (order->orderStatus == 500) {
     printf("Credit Exceeded\n");
   }
-  printf("Customer ID   : %d\n", order->customerID);
-  printf("Total Amount  : $%.2f\n", order->orderTotal);
-  printf("Distinct Parts: %d\n", order->distinctParts);
-  printf("Total Parts   : %d\n", order->totalParts);
+  printf("Customer ID   : %d,\tDistinct Parts: %d\n", order->customerID, order->distinctParts);
+  printf("Total Parts   : %d,\tTotal Amount  : $%.2f\n", order->totalParts, order->orderTotal);
   for (int i = 0; i < order->distinctParts; i++) {
     printf("Part ID: %d, Quantity Ordered: %d\n",
            order->orderedParts[i].partID, order->orderedParts[i].quantityOrdered);
