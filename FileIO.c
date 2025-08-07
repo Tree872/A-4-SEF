@@ -9,6 +9,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+// FUNCTION : loadCustomers
+// DESCRIPTION : 
+//    Reads customer data from a file and populates the customers array.
+//    Includes error handling for file operations and calling data validation functions.
+// PARAMETERS :
+//    Customer* customers: Pointer to an array of Customer structures to be filled.
+//    const char* fileName: Name of the file to read customer data from.
+// RETURNS :
+//    int : The number of customers successfully loaded.
 int loadCustomers(Customer* customers, const char* fileName) {
   int customerCount = 0;
   int lineNumber = 0; // For error reporting
@@ -58,7 +67,15 @@ int loadCustomers(Customer* customers, const char* fileName) {
   fclose(file);
   return customerCount;
 }
-
+// FUNCTION : parseFieldsToCustomer
+// DESCRIPTION :
+//    Converts an array of strings (fields) into a Customer structure.
+//    Assumes that the fields are in the correct order and format as defined in the Customer structure.
+//    Assumes that the fields are validated.
+// PARAMETERS :
+//    const char** fields: Array of strings containing customer data.
+// RETURNS :
+//    Customer : An instance of a Customer struct populated with the data from the fields.
 Customer parseFieldsToCustomer(const char** fields) {
   Customer newCustomer;
   strcpy_s(newCustomer.customerName, sizeof(newCustomer.customerName), fields[0]);
@@ -75,7 +92,15 @@ Customer parseFieldsToCustomer(const char** fields) {
   strcpy_s(newCustomer.customerJoinDate, sizeof(newCustomer.customerJoinDate), fields[11]);
   return newCustomer;
 }
-
+// FUNCTION : loadParts
+// DESCRIPTION :
+//    Reads part data from a file and populates the parts array.
+//    Includes error handling for file operations and calling data validation functions.
+// PARAMETERS :
+//    Part* parts: Pointer to an array of Part structures to be filled.
+//    const char* fileName: Name of the file to read part data from.
+// RETURNS :
+//    int : The number of parts successfully loaded.
 int loadParts(Part* parts, const char* fileName) {
   int partCount = 0;
   int lineNumber = 0; // For error reporting
@@ -127,7 +152,15 @@ int loadParts(Part* parts, const char* fileName) {
   fclose(file);
   return partCount;
 }
-
+// FUNCTION : parseFieldsToPart
+// DESCRIPTION :
+//    Converts an array of strings (fields) into a Part structure.
+//    Assumes that the fields are in the correct order and format as defined in the Part structure.
+//    Assumes that the fields are validated.
+// PARAMETERS :
+//    const char** fields: Array of strings containing part data.
+// RETURNS :
+//    Part : An instance of a Part struct populated with the data from the fields.
 Part parseFieldsToPart(const char** fields) {
   Part newPart;
   strcpy_s(newPart.partName, sizeof(newPart.partName), fields[0]);
@@ -139,7 +172,20 @@ Part parseFieldsToPart(const char** fields) {
   sscanf_s(fields[6], "%d", &newPart.partID);
   return newPart;
 }
-
+// FUNCTION : loadOrders
+// DESCRIPTION :
+//    Reads order data from a file and populates the orders array.
+//    It uses the parts and customers arrays to validate their IDs in the order.
+//    Includes error handling for file operations and calling data validation functions.
+// PARAMETERS :
+//    Order* orders: Pointer to an array of Order structures to be filled.
+//    const Part* parts: Pointer to an array of Part structures for validation.
+//    int partCount: Number of parts in the parts array.
+//    const Customer* customers: Pointer to an array of Customer structures for validation.
+//    int customerCount: Number of customers in the customers array.
+//    const char* fileName: Name of the file to read order data from.
+// RETURNS :
+//    int : The number of orders successfully loaded.
 int loadOrders(Order* orders, const Part* parts, int partCount, const Customer* customers, int customerCount, const char* fileName) {
   int orderCount = 0;
   int lineNumber = 0; // For error reporting
@@ -191,7 +237,15 @@ int loadOrders(Order* orders, const Part* parts, int partCount, const Customer* 
   
   return orderCount;
 }
-
+// FUNCTION : parseFieldsToOrder
+// DESCRIPTION :
+//    Converts an array of strings (fields) into an Order structure.
+//    Assumes that the fields are in the correct order and format as defined in the Order structure.
+//    Assumes that the fields are validated.
+// PARAMETERS :
+//    const char** fields: Array of strings containing order data.
+// RETURNS :
+//    Order : An instance of an Order struct populated with the data from the fields.
 Order parseFieldsToOrder(const char** fields) {
   Order newOrder;
   sscanf_s(fields[0], "%lld", &newOrder.orderID);
@@ -209,7 +263,20 @@ Order parseFieldsToOrder(const char** fields) {
   
   return newOrder;
 }
-
+// FUNCTION : splitLine
+// DESCRIPTION :
+//    Splits a line of text into fields based on a specified delimiter.
+//    Can handle up to fieldLimit fields.
+//    A field must end with the delimiter character to be considered valid. 
+//    (e.g., "1|2|3" results in 2 fields: "1", "2" while "1|2|3| results in 3 fields: "1", "2", "3")
+//    Modifies the input line by replacing the delimiter with a null terminator.
+// PARAMETERS :
+//    char* line: The line of text to be split.
+//    char** fields: An array to hold the pointers to the start of each field.
+//    int fieldLimit: The maximum number of fields to be stored in the fields array.
+//    char delimiter: The character used to split the line into fields.
+// RETURNS :
+//    int : The number of fields successfully split from the line. Returns -1 if fieldLimit is exceeded.
 int splitLine(char* line, char** fields, int fieldLimit, char delimiter) {
   int fieldCount = 0;
   char* tokenStartPointer = line;

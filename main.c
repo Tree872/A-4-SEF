@@ -15,10 +15,9 @@ int main() {
   Part parts[10]; 
   int customerCount = loadCustomers(customers, CUSTOMERS_FILE);
   int partCount = loadParts(parts, PARTS_FILE);
-
+  // Order must be loaded after customers and parts
   Order orders[10];
   int orderCount = loadOrders(orders, parts, partCount, customers, customerCount, ORDERS_FILE);
-  printf("Loaded %d customers, %d parts, and %d orders.\n", customerCount, partCount, orderCount);
   printOrder(&orders[0]);
   
 }

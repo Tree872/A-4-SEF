@@ -9,7 +9,16 @@
 const char* CANADA_PROVINCES[] = {
     "AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"
 };
-
+// FUNCTION : validateCustomerFields
+// DESCRIPTION :
+//    Validates the fields of a customer record.
+//    Checks for correct formats, lengths, and valid values according to PWH System requirements.
+//    Assumes the fields are in the correct amount
+// PARAMETERS :
+//    char** fields: Array of strings containing customer data.
+//    int lineNumber: The line number in the file for error reporting.
+// RETURNS :
+//    int : 1 if all fields are valid, 0 if any field is invalid.
 int validateCustomerFields(char** fields, int lineNumber) {
   char errorMessage[1024];
   snprintf(errorMessage, sizeof(errorMessage), "Error when loading  customers database: Line %d: ", lineNumber);
@@ -84,7 +93,16 @@ int validateCustomerFields(char** fields, int lineNumber) {
   }
   return 1;
 }
-
+// FUNCTION : validatePartFields
+// DESCRIPTION :
+//    Validates the fields of a part record.
+//    Checks for correct formats, lengths, and valid values according to PWH System requirements.
+//    Assumes the fields are in the correct amount
+// PARAMETERS :
+//    char** fields: Array of strings containing part data.
+//    int lineNumber: The line number in the file for error reporting.
+// RETURNS :
+//    int : 1 if all fields are valid, 0 if any field is invalid.
 int validatePartFields(char** fields, int lineNumber) {
   char errorMessage[1024];
   snprintf(errorMessage, sizeof(errorMessage), "Error when loading part database: Line %d: ", lineNumber);
@@ -135,7 +153,22 @@ int validatePartFields(char** fields, int lineNumber) {
   }
   return 1;
 }
-
+// FUNCTION : validateOrderFields
+// DESCRIPTION :
+//    Validates the fields of an order record.
+//    Checks for correct formats, lengths, and valid values according to PWH System requirements.
+//    Assumes the fields are in the correct amount
+//    Uses existing parts and customers arrays to validate part IDs and customer IDs.
+// PARAMETERS :
+//    char** fields: Array of strings containing order data.
+//    int numOfReadFields: Number of fields read from the order line.
+//    int lineNumber: The line number in the file for error reporting.
+//    const Part* parts: Pointer to the array of Part structures for validating part IDs.
+//    int partCount: Number of parts in the parts array.
+//    const Customer* customers: Pointer to the array of Customer structures for validating customer IDs.
+//    int customerCount: Number of customers in the customers array.
+// RETURNS :
+//    int : 1 if all fields are valid, 0 if any field is invalid.
 int validateOrderFields(char** fields, int numOfReadFields, int lineNumber, const Part* parts, int partCount, const Customer* customers, int customerCount) {
   char errorMessage[4096];
   snprintf(errorMessage, sizeof(errorMessage), "Error when loading orders database: Line %d: ", lineNumber);
@@ -246,7 +279,13 @@ int validateOrderFields(char** fields, int numOfReadFields, int lineNumber, cons
   }
   return 1;
 }
-
+// FUNCTION : validateProvince
+// DESCRIPTION :
+//    Validates the province code against a predefined list of Canadian provinces.
+// PARAMETERS :
+//    const char* province: The province code to validate.
+// RETURNS :
+//    int : 1 if the province code is valid, 0 if it is invalid.
 int validateProvince(const char* province) {
   if (strlen(province) != 2) {
     return 0; // Invalid province format
@@ -259,7 +298,13 @@ int validateProvince(const char* province) {
   }
   return 0; 
 }
-
+// FUNCTION : validatePostalCode
+// DESCRIPTION :
+//    Validates the postal code format according to the (ANANAN) format (A for letters, N for numbers).
+// PARAMETERS :
+//    const char* postalCode: The postal code to validate.
+// RETURNS :
+//    int : 1 if the postal code is valid, 0 if it is invalid.
 int validatePostalCode(const char* postalCode) {
   if (strlen(postalCode) != 6) {
     return 0; // Invalid postal code length
@@ -274,7 +319,13 @@ int validatePostalCode(const char* postalCode) {
   }
   return 1;
 }
-
+// FUNCTION : validatePhoneNumber
+// DESCRIPTION :
+//    Validates the phone number format according to the (###-###-####) format.
+// PARAMETERS :
+//    const char* phoneNumber: The phone number to validate.
+// RETURNS :
+//    int : 1 if the phone number is valid, 0 if it is invalid.
 int validatePhoneNumber(const char* phoneNumber) {
   if (strlen(phoneNumber) != 12) {
     return 0; // Invalid phone number length
@@ -291,7 +342,14 @@ int validatePhoneNumber(const char* phoneNumber) {
   }
   return 1; 
 }
-
+// FUNCTION : validateEmail
+// DESCRIPTION :
+//    Validates the email address format according to the specified rules.
+//    Read the rules in the comments within the function.
+// PARAMETERS :
+//    const char* email: The email address to validate.
+// RETURNS :
+//    int : 1 if the email address is valid, 0 if it is invalid.
 int validateEmail(const char* email) {
   //  The email address must start and end with a letter (no numbers or symbols).
   //  There must be exactly one @ somewhere in the string.
@@ -340,7 +398,14 @@ int validateEmail(const char* email) {
 
   return 1;
 }
-
+// FUNCTION : validateDate
+// DESCRIPTION :
+//    Validates the date format according to the (YYYY-MM-DD) format.
+//    Checks if the date is a valid calendar date.
+// PARAMETERS :
+//    const char* date: The date string to validate.
+// RETURNS :
+//    int : 1 if the date is valid, 0 if it is invalid.
 int validateDate(const char* date) {
   // Format check (YYYY-MM-DD)
   if (strlen(date) != 10) {
@@ -363,7 +428,13 @@ int validateDate(const char* date) {
 
   return isValidDate(year, month, day); 
 }
-
+// FUNCTION : validatePartLocation
+// DESCRIPTION :
+//    Validates the part location format according to the (A###-S###-L##-B##) format.
+// PARAMETERS :
+//    const char* partLocation: The part location string to validate.
+// RETURNS :
+//    int : 1 if the part location is valid, 0 if it is invalid.
 int validatePartLocation(const char* partLocation) {
   if (strlen(partLocation) != 17 || partLocation[4] != '-' || partLocation[9] != '-' || partLocation[13] != '-') {
     printf("Invalid part location format: %s\n", partLocation);
@@ -384,7 +455,14 @@ int validatePartLocation(const char* partLocation) {
   }
   return 1; 
 }
-
+// FUNCTION : validatePartStatus
+// DESCRIPTION :
+//    Validates the part status based on the quantity on hand and part status value.
+// PARAMETERS :
+//    char* quantityOnHand: The quantity on hand string to validate.
+//    char* partStatus: The part status string to validate.
+// RETURNS :
+//    int : 1 if the part status is valid, 0 if it is invalid.
 int validatePartStatus(char* quantityOnHand, char* partStatus) {
   if (!isInteger(quantityOnHand) || !isInteger(partStatus)) {
     return 0; // Invalid input
@@ -404,7 +482,14 @@ int validatePartStatus(char* quantityOnHand, char* partStatus) {
   }
   return 1; 
 }
-
+// FUNCTION : validateOrderID
+// DESCRIPTION :
+//    Validates the order ID format according to the (YYYYMMDDSSS) format.
+//    Checks if the date is valid and if the order ID is an integer.
+// PARAMETERS :
+//    const char* orderID: The order ID string to validate.
+// RETURNS :
+//    int : 1 if the order ID is valid, 0 if it is invalid.
 int validateOrderID(const char* orderID) {
   if (strlen(orderID) != 11) {
     return 0; 
@@ -420,7 +505,13 @@ int validateOrderID(const char* orderID) {
   }
   return 1;
 }
-
+// FUNCTION : validateOrderStatus
+// DESCRIPTION :
+//    Validates the order status based on predefined valid values (0, 1, 99, 500).
+// PARAMETERS :
+//    char* orderStatus: The order status string to validate.
+// RETURNS :
+//    int : 1 if the order status is valid, 0 if it is invalid.
 int validateOrderStatus(char* orderStatus) {
   if (!isInteger(orderStatus)) {
     return 0;
@@ -432,7 +523,15 @@ int validateOrderStatus(char* orderStatus) {
   }
   return 1; 
 }
-
+// FUNCTION : validateCustomerIDInOrder
+// DESCRIPTION :
+//    Validates the customer ID in an order against the existing customers.
+// PARAMETERS :
+//    char* customerID: The customer ID string to validate.
+//    const Customer* customers: Pointer to the array of Customer structures for validating customer IDs.
+//    int customerCount: Number of customers in the customers array.
+// RETURNS :
+//    int : 1 if the customer ID is valid and exists in the customers array, 0 if it is invalid or does not exist.
 int validateCustomerIDInOrder(char* customerID, const Customer* customers, int customerCount) {
   if (!isInteger(customerID)) {
     return 0; 
@@ -449,7 +548,15 @@ int validateCustomerIDInOrder(char* customerID, const Customer* customers, int c
   }
   return 0; 
 }
-
+// FUNCTION : validatePartIDInOrder
+// DESCRIPTION :
+//    Validates the part ID in an order against the existing parts.
+// PARAMETERS :
+//    int partID: The part ID to validate.
+//    const Part* parts: Pointer to the array of Part structures for validating part IDs.
+//    int partCount: Number of parts in the parts array.
+// RETURNS :
+//    int : 1 if the part ID is valid and exists in the parts array, 0 if it is invalid or does not exist.
 int validatePartIDInOrder(int partID, const Part* parts, int partCount) {
   if (partID <= 0) {
     return 0; // Invalid part ID
@@ -461,7 +568,13 @@ int validatePartIDInOrder(int partID, const Part* parts, int partCount) {
   }
   return 0; // Part ID not found
 }
-
+// FUNCTION : isInteger
+// DESCRIPTION :
+//    Checks if a string represents a valid integer.
+// PARAMETERS :
+//    const char* str: The string to check.
+// RETURNS :
+//    int : 1 if the string is a valid integer, 0 if it is not.
 int isInteger(const char* str) {
   if (str == NULL || *str == '\0') {
     return 0;
@@ -480,7 +593,13 @@ int isInteger(const char* str) {
   }
   return 1;
 }
-
+// FUNCTION : isNumber
+// DESCRIPTION :
+//    Checks if a string represents a valid number (integer or float).
+// PARAMETERS :
+//    const char* str: The string to check.
+// RETURNS :
+//    int : 1 if the string is a valid number, 0 if it is not.
 int isNumber(const char* str) {
   if (str == NULL || *str == '\0') {
     return 0;
@@ -510,7 +629,15 @@ int isNumber(const char* str) {
 
   return 1;
 }
-
+// FUNCTION : isValidDate
+// DESCRIPTION :
+//    Checks if a date is valid based on the year, month, and day.
+// PARAMETERS :
+//    int year: The year of the date.
+//    int month: The month of the date (1-12).
+//    int day: The day of the date (1-31).
+// RETURNS :
+//    int : 1 if the date is valid, 0 if it is invalid.
 int isValidDate(int year, int month, int day) {
   if (year < 2000 || year > 2100 || month < 1 || month > 12 || day < 1) {
     return 0; 
