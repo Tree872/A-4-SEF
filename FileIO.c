@@ -1,4 +1,8 @@
-﻿#include "FileIO.h"
+﻿// FILE : FileIO.c
+// DESCRIPTION : 
+//    Implements functions for loading customers, parts, and orders from files.
+//    This file includes and parsing functions and validation by calling from validation.h.
+#include "FileIO.h"
 #include "Customer.h"
 #include "Part.h"
 #include "Order.h"

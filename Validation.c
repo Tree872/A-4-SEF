@@ -1,4 +1,8 @@
-﻿#include "Validation.h"
+﻿// FILE : Validation.c
+// DESCRIPTION :
+//    Implements functions for validating customer, part, and order fields.
+//    It checks for correct formats, lengths, and valid values according to PWH System requirements.
+#include "Validation.h"
 #include "Customer.h"
 #include "Part.h"
 #include "Order.h"

@@ -1,3 +1,5 @@
+// FILE : Logger.c
+// DESCRIPTION : Implements logging functionality for the system.
 #include "Logger.h"
 #include "Constants.h"
 #include <stdio.h>

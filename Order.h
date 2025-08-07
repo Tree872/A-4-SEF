@@ -1,3 +1,5 @@
+// FILE : Order.h
+// DESCRIPTION : This header file defines the structure for Order and supporting types.
 #ifndef ORDER_H
 #define ORDER_H
 #include "Constants.h"

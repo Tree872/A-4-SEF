@@ -1,3 +1,5 @@
+// FILE : FileIO.h
+// DESCRIPTION : This header file defines functions for loading customers, parts, and orders from files.
 #ifndef FILEIO_H
 #define FILEIO_H
 

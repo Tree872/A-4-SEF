@@ -1,3 +1,5 @@
+// FILE: Logger.h
+// DESCRIPTION: This header file defines the logging functions used in the system.
 #ifndef LOGGER_H
 #define LOGGER_H
 

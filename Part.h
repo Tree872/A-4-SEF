@@ -1,3 +1,5 @@
+// FILE : Part.h
+// DESCRIPTION : This header file defines the structure for Part.
 #ifndef PART_H
 #define PART_H
 

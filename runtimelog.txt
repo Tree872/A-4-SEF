@@ -1,30 +1,4 @@
-2025-08-07 12:47:34 | Error when loading  customers database: Line 3: 
-Field #4: Customer province must be a valid canadian province abbreviations
-2025-08-07 12:47:34 | Error when loading orders database: Line 2: 
-Field #4: Customer ID must be a positive integer and must link to an existing customer.
-2025-08-07 12:48:30 | Error when loading  customers database: Line 3: 
-Field #4: Customer province must be a valid canadian province abbreviation
-2025-08-07 12:48:30 | Error when loading orders database: Line 2: 
-Field #4: Customer ID must be a positive integer and must link to an existing customer.
-2025-08-07 13:38:31 | Error when loading  customers database: Line 3: 
-Field #2: Customer address must neither be blank or over 100 characters.
-Field #3: Customer city must neither be blank or over 100 characters. 
-Field #4: Customer province must be a valid canadian province abbreviation
-Field #5: Customer postal code must be in ANANAN format (where A is an alphabetic letter and N is a numeric digit)
-Field #6: Customer phone number must be in ###-###-#### format
-Field #7: Customer email address must a valid email address
-Field #11: Customer last payment date must be either blank or in YYYY-MM-DD format and is a valid date.
+2025-08-07 14:06:34 | Error when loading  customers database: Line 3: 
 Field #12: Customer join date must be in YYYY-MM-DD format and is a valid date.
-2025-08-07 13:38:31 | Error when loading orders database: Line 2: 
-Field #4: Customer ID must be a positive integer and must link to an existing customer.
-2025-08-07 13:43:48 | Error when loading  customers database: Line 3: 
-Field #2: Customer address must neither be blank or over 100 characters.
-Field #3: Customer city must neither be blank or over 100 characters. 
-Field #4: Customer province must be a valid canadian province abbreviation
-Field #5: Customer postal code must be in ANANAN format (where A is an alphabetic letter and N is a numeric digit)
-Field #6: Customer phone number must be in ###-###-#### format
-Field #7: Customer email address must a valid email address
-Field #11: Customer last payment date must be either blank or in YYYY-MM-DD format and is a valid date.
-Field #12: Customer join date must be in YYYY-MM-DD format and is a valid date.
-2025-08-07 13:43:48 | Error when loading orders database: Line 2: 
+2025-08-07 14:06:34 | Error when loading orders database: Line 2: 
 Field #4: Customer ID must be a positive integer and must link to an existing customer.

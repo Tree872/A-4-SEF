@@ -1,3 +1,5 @@
+// FILE : Constants.h
+// DESCRIPTION : This header file defines constants used throughout the project.
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 

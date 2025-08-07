@@ -1,3 +1,5 @@
+// FILE: Customer.h
+// DESCRIPTION: This header file defines the structure for Customer.
 #ifndef CUSTOMER_H
 #define CUSTOMER_H
 
